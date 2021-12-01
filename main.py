@@ -1,5 +1,57 @@
 import numpy as np
 
+
+# latitude: (x+90)/180 longitude: (x+180)/360
+def readFile(file_name):
+    try:
+        file = open(file_name + ".txt", "r")
+    except OSError:
+        print("- Could not open/read file: " + file_name)
+        return None
+
+    coords =[]
+    regions =[]
+    for line in file:
+        temp = line.split()
+        latitude = (float(temp[0])+90)/180
+        longitude = (float(temp[1]) + 180)/360
+        coords.append((latitude,longitude))
+        regions.append(getExpectedOutput(temp[2]))
+
+    return coords,regions
+
+
+def getExpectedOutput(region):
+    index = 0  # Africa
+    if (region == "America"):
+        index = 1
+    elif (region == "Antartica"):
+        index = 2
+    elif (region == "Asia"):
+        index = 3
+    elif (region == "Australia"):
+        index = 4
+    elif (region == "Europe"):
+        index = 5
+    elif (region == "Arctic"):
+        index = 6
+    elif (region == "Atlantic"):
+        index = 7
+    elif (region == "Indian"):
+        index = 8
+    elif (region == "Pacific"):
+        index = 9
+    expected_output = []
+    for i in range(10):
+        if i == index:
+            output = 1
+        else:
+            output = 0
+        expected_output.append(output)
+
+    return expected_output
+
+
 class Perceptron:
     def __init__(self, input_num, output_num):
         self.weights = []
@@ -37,17 +89,24 @@ class Perceptron:
     # - expected_outputs -> list containing the expected outputs of each sample in X
     # - epoch_num = number of epocs before terminating the funciton
     # Output: adjust weights to improve accuracy of Perceptron
-    def train(self, X, expected_outputs, epochs=10):
-        #iterating thru each sample
+    def train(self, X, expected_outputs, epoch_num=200):
+        # iterating thru each sample
+        epoch = 0
         for x, exp in zip(X, expected_outputs):
+            if epoch == epoch_num:
+                print("----------------EPOCH REACHED------------------")
+                return;
             actual = self.predict(x)
 
             print("\n---------------TRAINING " + str(x))
             print("EXPECTED OUTPUT: " + str(exp))
             print("ACTUAL OUTPUT: " + str(actual))
 
+            # Compare Actual Outputs with Expected Outputs #
             for i in range(self.output_num):
                 print("\n--> Neuron " + str(i))
+
+                # Adjust Weights #
                 for j in range(self.input_num):
                     print(" Weight before = " + str(self.weights[i][j]))
                     print(" " + str(self.weights[i][j]) + " = " + str(self.weights[i][j]) + " + (" + str(
@@ -55,6 +114,8 @@ class Perceptron:
 
                     self.weights[i][j] = self.weights[i][j] + self.alpha*(exp[i] - actual[i])*x[j]
                     print(" Weight After = " + str(self.weights[i][j]) + "\n")
+
+            epoch += 1
 
 
 X = [[2, 1],
@@ -64,5 +125,8 @@ expected_output_test = [[0, 1],
                         [1, 0]]
 
 if __name__ == '__main__':
-    perceptron = Perceptron(2, 2)
-    perceptron.train(X, expected_output_test)
+    coords, expected_output = readFile("nnTestData")
+    # print(coords)
+
+    perceptron = Perceptron(2, 10)
+    perceptron.train(coords, expected_output)
