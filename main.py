@@ -1,5 +1,6 @@
 import numpy as np
 
+np.random.seed(0)
 
 # latitude: (x+90)/180 longitude: (x+180)/360
 def readFile(file_name):
@@ -58,7 +59,7 @@ class Perceptron:
         # num of weight pairs = num of outputs
         for i in range(output_num):
             # TODO: make it random
-            weight = [0, 0]
+            weight = [np.random.uniform(10.5, 75.5), np.random.uniform(10.5, 75.5)]
             self.weights.append(weight)
 
         self.input_num = input_num
@@ -89,34 +90,42 @@ class Perceptron:
     # - expected_outputs -> list containing the expected outputs of each sample in X
     # - epoch_num = number of epocs before terminating the funciton
     # Output: adjust weights to improve accuracy of Perceptron
-    def train(self, X, expected_outputs, epoch_num=200):
+    def train(self, X, expected_outputs, epoch_num=300):
         # iterating thru each sample
         epoch = 0
         for x, exp in zip(X, expected_outputs):
-            if epoch == epoch_num:
-                print("----------------EPOCH REACHED------------------")
-                return;
+            # if epoch == epoch_num:
+            #     print("----------------EPOCH REACHED------------------")
+            #     return;
             actual = self.predict(x)
 
-            print("\n---------------TRAINING " + str(x))
-            print("EXPECTED OUTPUT: " + str(exp))
-            print("ACTUAL OUTPUT: " + str(actual))
+            # print("\n---------------TRAINING " + str(x))
+            # print("EXPECTED OUTPUT: " + str(exp))
+            # print("ACTUAL OUTPUT: " + str(actual))
 
             # Compare Actual Outputs with Expected Outputs #
             for i in range(self.output_num):
-                print("\n--> Neuron " + str(i))
+                # print("\n--> Neuron " + str(i))
 
                 # Adjust Weights #
                 for j in range(self.input_num):
-                    print(" Weight before = " + str(self.weights[i][j]))
-                    print(" " + str(self.weights[i][j]) + " = " + str(self.weights[i][j]) + " + (" + str(
-                        exp[i]) + " - " + str(actual[i]) + ")*" + str(x[j]))
+                    # print(" Weight before = " + str(self.weights[i][j]))
+                    # print(" " + str(self.weights[i][j]) + " = " + str(self.weights[i][j]) + " + (" + str(
+                    #     exp[i]) + " - " + str(actual[i]) + ")*" + str(x[j]))
 
                     self.weights[i][j] = self.weights[i][j] + self.alpha*(exp[i] - actual[i])*x[j]
-                    print(" Weight After = " + str(self.weights[i][j]) + "\n")
+                    # print(" Weight After = " + str(self.weights[i][j]) + "\n")
 
             epoch += 1
 
+        print("--End of training")
+        file = open("trainedWeights.txt", 'w')
+        counter = 0
+        for w in self.weights:
+            for i in range(len(w)):
+                file.write("w" + str(counter) + ": " + str(w[i]) + "\n")
+                counter += 1
+        file.close()
 
 X = [[2, 1],
      [3, 3]]
@@ -125,7 +134,7 @@ expected_output_test = [[0, 1],
                         [1, 0]]
 
 if __name__ == '__main__':
-    coords, expected_output = readFile("nnTestData")
+    coords, expected_output = readFile("nnTrainData")
     # print(coords)
 
     perceptron = Perceptron(2, 10)
