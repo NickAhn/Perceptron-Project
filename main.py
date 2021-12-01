@@ -3,8 +3,15 @@ import numpy as np
 class Perceptron:
     def __init__(self, input_num, output_num):
         self.weights = []
+        # num of weight pairs = num of outputs
+        for i in range(output_num):
+            # TODO: make it random
+            weight = [0, 0]
+            self.weights.append(weight)
+
         self.input_num = input_num
         self.output_num = output_num
+        self.alpha = 1
 
     # Creates the output of a single Neuron of the Perceptron
     def output(self, x, weights):
@@ -35,11 +42,27 @@ class Perceptron:
         for x, exp in zip(X, expected_outputs):
             actual = self.predict(x)
 
-            for i in range(self.output_num):
-                for j in range(self.input_num):
-                    #adjust weights
-                    self.weights[i][j] = self.weights[i][j] + self.alpha*(exp[i] - actual[i])*input[j]
+            print("\n---------------TRAINING " + str(x))
+            print("EXPECTED OUTPUT: " + str(exp))
+            print("ACTUAL OUTPUT: " + str(actual))
 
+            for i in range(self.output_num):
+                print("\n--> Neuron " + str(i))
+                for j in range(self.input_num):
+                    print(" Weight before = " + str(self.weights[i][j]))
+                    print(" " + str(self.weights[i][j]) + " = " + str(self.weights[i][j]) + " + (" + str(
+                        exp[i]) + " - " + str(actual[i]) + ")*" + str(x[j]))
+
+                    self.weights[i][j] = self.weights[i][j] + self.alpha*(exp[i] - actual[i])*x[j]
+                    print(" Weight After = " + str(self.weights[i][j]) + "\n")
+
+
+X = [[2, 1],
+     [3, 3]]
+
+expected_output_test = [[0, 1],
+                        [1, 0]]
 
 if __name__ == '__main__':
-    print("Hello World!")
+    perceptron = Perceptron(2, 2)
+    perceptron.train(X, expected_output_test)
