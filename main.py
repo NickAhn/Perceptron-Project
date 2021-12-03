@@ -7,10 +7,25 @@ np.random.seed(0)
 # #
 LEARNING_RATE = 0.7
 THRESHOLD_RATE = 0.06
-EPOCHS = 1
+EPOCHS = 70
 TRAINING_DATA = "nnTrainData.txt"
 TEST_DATA = "nnTestData.txt"
 ###
+
+'''
+region_dict = {
+        "Africa", [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        "America", [0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+        "Antartica", [0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+        "Asia", [0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+        "Australia", [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+        "Europe", [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+        "Arctic", [0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+        "Atlantic", [0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+        "Indian", [0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+        "Pacific", [0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    }
+'''
 
 def readFile(file_name):
     try:
@@ -30,20 +45,7 @@ def readFile(file_name):
 
     return coords,regions
 
-'''
-region_dict = {
-        "Africa", [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        "America", [0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-        "Antartica", [0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-        "Asia", [0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-        "Australia", [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-        "Europe", [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
-        "Arctic", [0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
-        "Atlantic", [0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
-        "Indian", [0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-        "Pacific", [0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    }
-'''
+
 def getExpectedOutput(region):
     index = 0  # Africa
     if (region == "America"):
@@ -146,6 +148,7 @@ class Perceptron:
         file.close()
 
     def run(self, X, expected_outputs):
+        print("\n---------Start of Testing------------")
         perfect_count = 0
 
         data_count = 0 # variable to count the total number of sample
@@ -154,15 +157,13 @@ class Perceptron:
         # go through each sample and compare actual vs expected output
         for x, exp in zip(X, expected_outputs):
             actual = self.predict(x)
-            # print("\n---------------RUN " + str(x))
-            # print("EXPECTED OUTPUT: " + str(exp))
-            # print("ACTUAL OUTPUT: " + str(actual))
             neurons_fired_count = 0 # Count how many outputs were = 1
 
             # go through each output
             for i in range(self.output_num):
                 if actual[i] == exp[i]:
                     perfect_count += 1
+
                 if actual[i] == 1:
                     neurons_fired_count += 1
 
@@ -174,7 +175,7 @@ class Perceptron:
                 none_fired_count += 1
 
 
-        print("\n------------END OF RUN------------")
+        print("\n---------End of Testing------------")
         # print("- Number of perfectly classified outputs: " + str(float(perfect_count) / self.output_num))
         # print("- data count: " + str(data_count))
         print("- Percentage of the examples in the testing data set were perfectly classified: "
@@ -204,8 +205,8 @@ if __name__ == '__main__':
 
 
 
-#uniform between 0 and 1
+# perfectly classified output percentage:
 # alpha = 0.7, threhsold=0.06, epochs=10: 91.48306451612903%
 # alpha = 0.7, threhsold=0.06, epochs=20: 90.37717741935484%
 # alpha = 0.7, threhsold=0.06, epochs=30: 91.89120967741935%
-#Perceptron(2, 10, 0.7, 0.06, 70) =
+#Perceptron(2, 10, 0.7, 0.06, 70) = 92.50588709677419% <- best
