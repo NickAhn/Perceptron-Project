@@ -7,25 +7,16 @@ np.random.seed(0)
 # #
 LEARNING_RATE = 0.7
 THRESHOLD_RATE = 0.06
-EPOCHS = 70
+EPOCHS = 1
 TRAINING_DATA = "nnTrainData.txt"
 TEST_DATA = "nnTestData.txt"
 ###
 
-'''
-region_dict = {
-        "Africa", [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        "America", [0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-        "Antartica", [0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-        "Asia", [0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-        "Australia", [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-        "Europe", [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
-        "Arctic", [0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
-        "Atlantic", [0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
-        "Indian", [0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-        "Pacific", [0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    }
-'''
+# perfectly classified output percentage:
+# alpha = 0.7, threhsold=0.06, epochs=10: 91.48306451612903%
+# alpha = 0.7, threhsold=0.06, epochs=20: 90.37717741935484%
+# alpha = 0.7, threhsold=0.06, epochs=30: 91.89120967741935%
+#Perceptron(2, 10, 0.7, 0.06, 70) = 92.50588709677419% <- best
 
 def readFile(file_name):
     try:
@@ -82,9 +73,7 @@ class Perceptron:
         self.weights = []
         # num of weight pairs = num of outputs
         for i in range(output_num):
-            # TODO: make it random
             weight = [np.random.uniform(0, 1), np.random.uniform(0, 1)]
-            # weight = [np.random.uniform(10.5, 75.5), np.random.uniform(10.5, 75.5)]
             self.weights.append(weight)
 
         self.input_num = input_num
@@ -92,6 +81,7 @@ class Perceptron:
         self.alpha = learning_rate
         self.epoch_num = epoch_num
         self.threshold = threshold_rate
+        self.regions = ["Africa", "America", "Antarctica", "Asia", "Australia", "Europe", "Arctic", "Atlantic", "Indian", "Pacific"]
 
     # Creates the output of a single Neuron of the Perceptron
     def output(self, x, weights):
@@ -134,20 +124,29 @@ class Perceptron:
                         self.weights[i][j] = self.weights[i][j] + self.alpha*(exp[i] - actual[i])*x[j]
 
         print("---------End of training------------")
+        self.printWeights()
 
+    # function to write final weights after training in a separate text file
     def printWeights(self):
         file = open("trainedWeights.txt", 'w')
-        counter = 0
+        for region, w in zip(self.regions, self.weights):
+            file.write(region + " " + str(w[0]) + " " + str(w[1]) + "\n")
 
-        print("Final Weights:")
-        for w in self.weights:
-            for i in range(len(w)):
-                # print(" w" + str(counter) + ": " + str(w[i]))
-                file.write("w" + str(counter) + ": " + str(w[i]) + "\n")
-                counter += 1
         file.close()
 
+    def print_neuron_stats(self, arr, data_count):
+        for i in range(len(self.regions)):
+            print("Neuron: ", self.regions[i])
+            print("\tCorrect: ", (arr[i][0] / data_count) * 100, "%")
+            print("\tTrue Positives: ", (arr[i][1] / data_count) * 100, "%")
+            print("\tTrue Negatives: ", (arr[i][2] / data_count) * 100, "%")
+            print("\tFalse Positives: ", (arr[i][3] / data_count) * 100, "%")
+            print("\tFalse Negatives: ", (arr[i][4] / data_count) * 100, "%")
+
     def run(self, X, expected_outputs):
+        neuron_stats = [[0 for i in range(5)] for j in range(10)]
+        print(neuron_stats)
+
         print("\n---------Start of Testing------------")
         perfect_count = 0
 
@@ -162,10 +161,28 @@ class Perceptron:
             # go through each output
             for i in range(self.output_num):
                 if actual[i] == exp[i]:
+                    #correct
                     perfect_count += 1
 
                 if actual[i] == 1:
                     neurons_fired_count += 1
+
+                #Counting Individual Neurons
+                if actual[i] == exp[i]:
+                    # Correct
+                    neuron_stats[i][0] += 1
+                if actual[i] == 1 and exp[i] == 1:
+                    # True Positive
+                    neuron_stats[i][1] += 1
+                elif actual[i] == 0 and exp[i] == 0:
+                    # True Negative
+                    neuron_stats[i][2] += 1
+                elif actual[i] == 1 and exp[i] == 0:
+                    # False Positive
+                    neuron_stats[i][3] += 1
+                else:
+                    #False Negative
+                    neuron_stats[i][4] += 1
 
             data_count += 1
 
@@ -173,7 +190,6 @@ class Perceptron:
                 multiple_fired_count += 1
             elif multiple_fired_count == 0:
                 none_fired_count += 1
-
 
         print("\n---------End of Testing------------")
         # print("- Number of perfectly classified outputs: " + str(float(perfect_count) / self.output_num))
@@ -185,6 +201,52 @@ class Perceptron:
               + str(multiple_fired_count*100/data_count) + "%")
         print("- Percentage of the examples in the testing data set caused zero neurons to fire: "
               + str(none_fired_count*100/data_count) + "%")
+
+        self.print_neuron_stats(neuron_stats, data_count)
+
+
+
+
+    # def run(self, X, expected_outputs):
+    #     print("\n---------Start of Testing------------")
+    #     perfect_count = 0
+    #
+    #     data_count = 0 # variable to count the total number of sample
+    #     none_fired_count = 0
+    #     multiple_fired_count = 0
+    #     # go through each sample and compare actual vs expected output
+    #     for x, exp in zip(X, expected_outputs):
+    #         actual = self.predict(x)
+    #         neurons_fired_count = 0 # Count how many outputs were = 1
+    #
+    #         #exp = getExpectedOutput(regions)
+    #
+    #         # go through each output
+    #         for i in range(self.output_num):
+    #             if actual[i] == exp[i]:
+    #                 perfect_count += 1
+    #
+    #             if actual[i] == 1:
+    #                 neurons_fired_count += 1
+    #
+    #         data_count += 1
+    #
+    #         if neurons_fired_count > 1:
+    #             multiple_fired_count += 1
+    #         elif multiple_fired_count == 0:
+    #             none_fired_count += 1
+    #
+    #
+    #     print("\n---------End of Testing------------")
+    #     # print("- Number of perfectly classified outputs: " + str(float(perfect_count) / self.output_num))
+    #     # print("- data count: " + str(data_count))
+    #     print("- Percentage of the examples in the testing data set were perfectly classified: "
+    #           + str((perfect_count/self.output_num)*100/data_count) + "%")
+    #
+    #     print("- Percentage of the examples in the testing data set caused multiple neurons to fire: "
+    #           + str(multiple_fired_count*100/data_count) + "%")
+    #     print("- Percentage of the examples in the testing data set caused zero neurons to fire: "
+    #           + str(none_fired_count*100/data_count) + "%")
 
 
     '''
@@ -205,8 +267,4 @@ if __name__ == '__main__':
 
 
 
-# perfectly classified output percentage:
-# alpha = 0.7, threhsold=0.06, epochs=10: 91.48306451612903%
-# alpha = 0.7, threhsold=0.06, epochs=20: 90.37717741935484%
-# alpha = 0.7, threhsold=0.06, epochs=30: 91.89120967741935%
-#Perceptron(2, 10, 0.7, 0.06, 70) = 92.50588709677419% <- best
+
