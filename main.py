@@ -16,7 +16,7 @@ TEST_DATA = "nnTestData.txt"
 # alpha = 0.7, threhsold=0.06, epochs=10: 91.48306451612903%
 # alpha = 0.7, threhsold=0.06, epochs=20: 90.37717741935484%
 # alpha = 0.7, threhsold=0.06, epochs=30: 91.89120967741935%
-#Perceptron(2, 10, 0.7, 0.06, 70) = 92.50588709677419% <- best
+# alpha = 0.7, threhsold=0.06, epochs=70: 92.50588709677419%
 
 def readFile(file_name):
     try:
