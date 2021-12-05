@@ -204,58 +204,6 @@ class Perceptron:
 
         self.print_neuron_stats(neuron_stats, data_count)
 
-
-
-
-    # def run(self, X, expected_outputs):
-    #     print("\n---------Start of Testing------------")
-    #     perfect_count = 0
-    #
-    #     data_count = 0 # variable to count the total number of sample
-    #     none_fired_count = 0
-    #     multiple_fired_count = 0
-    #     # go through each sample and compare actual vs expected output
-    #     for x, exp in zip(X, expected_outputs):
-    #         actual = self.predict(x)
-    #         neurons_fired_count = 0 # Count how many outputs were = 1
-    #
-    #         #exp = getExpectedOutput(regions)
-    #
-    #         # go through each output
-    #         for i in range(self.output_num):
-    #             if actual[i] == exp[i]:
-    #                 perfect_count += 1
-    #
-    #             if actual[i] == 1:
-    #                 neurons_fired_count += 1
-    #
-    #         data_count += 1
-    #
-    #         if neurons_fired_count > 1:
-    #             multiple_fired_count += 1
-    #         elif multiple_fired_count == 0:
-    #             none_fired_count += 1
-    #
-    #
-    #     print("\n---------End of Testing------------")
-    #     # print("- Number of perfectly classified outputs: " + str(float(perfect_count) / self.output_num))
-    #     # print("- data count: " + str(data_count))
-    #     print("- Percentage of the examples in the testing data set were perfectly classified: "
-    #           + str((perfect_count/self.output_num)*100/data_count) + "%")
-    #
-    #     print("- Percentage of the examples in the testing data set caused multiple neurons to fire: "
-    #           + str(multiple_fired_count*100/data_count) + "%")
-    #     print("- Percentage of the examples in the testing data set caused zero neurons to fire: "
-    #           + str(none_fired_count*100/data_count) + "%")
-
-
-    '''
-    - What percentage of the examples in the testing data set were perfectly classified:  i.e. only 
-    the correct neuron and none of the others fired.
-    - What percentage of the examples in the testing data set caused multiple neurons to fire. 
-    - What percentage of the examples in the testing data set caused zero neurons to fire. 
-    '''
-
 if __name__ == '__main__':
     coords_train, expected_output_train = readFile(TRAINING_DATA)
 
