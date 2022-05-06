@@ -7,7 +7,7 @@ np.random.seed(0)
 # #
 LEARNING_RATE = 0.7
 THRESHOLD_RATE = 0.06
-EPOCHS = 1
+EPOCHS = 10
 TRAINING_DATA = "nnTrainData.txt"
 TEST_DATA = "nnTestData.txt"
 ###
@@ -38,25 +38,19 @@ def readFile(file_name):
 
 
 def getExpectedOutput(region):
-    index = 0  # Africa
-    if (region == "America"):
-        index = 1
-    elif (region == "Antartica"):
-        index = 2
-    elif (region == "Asia"):
-        index = 3
-    elif (region == "Australia"):
-        index = 4
-    elif (region == "Europe"):
-        index = 5
-    elif (region == "Arctic"):
-        index = 6
-    elif (region == "Atlantic"):
-        index = 7
-    elif (region == "Indian"):
-        index = 8
-    elif (region == "Pacific"):
-        index = 9
+    dic = {
+        "Africa":0,
+        "America":1,
+        "Antartica":2,
+        "Asia":3,
+        "Australia":4,
+        "Europe":5,
+        "Arctic":6,
+        "Atlantic":7,
+        "Indian":8,
+        "Pacific":9
+    }
+    index = dic.get(region)
     expected_output = []
     for i in range(10):
         if i == index:
